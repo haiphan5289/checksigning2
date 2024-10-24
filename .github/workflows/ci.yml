@@ -33,7 +33,7 @@ jobs:
 
     - name: Build the app
       run: |
-        bundle exec fastlane build  # This runs the build lane
+        bundle exec fastlane ios beta --non-interactive --verbose
     
     - name: Print Xcode Build Log
       run: cat /Users/runner/Library/Logs/gym/checksigning-checksigning.log
