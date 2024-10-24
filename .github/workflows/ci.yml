@@ -31,6 +31,10 @@ jobs:
         gem install bundler  # Ensure Bundler is installed
         bundle install  # Install dependencies defined in the Gemfile
 
+    - name: Fetch certificates and provisioning profiles
+      run: |
+        bundle exec fastlane match development --readonly
+        
     - name: Build the app
       run: |
         bundle exec fastlane ios beta

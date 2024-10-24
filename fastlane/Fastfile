@@ -22,4 +22,10 @@ platform :ios do
     build_app(workspace: "checksigning2.xcworkspace", scheme: "checksigning2")
     upload_to_testflight
   end
+
+  desc "Build the app"
+  lane :build do
+    match(type: "development", readonly: true)  # Fetch development certificates/profiles
+    gym(workspace: "checksigning2.xcworkspace", scheme: "checksigning2")  # Build the app
+  end
 end
