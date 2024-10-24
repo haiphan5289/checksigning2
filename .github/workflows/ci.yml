@@ -43,5 +43,7 @@ jobs:
         xcodebuild clean \
           -workspace checksigning2.xcworkspace \
           -scheme checksigning2 \
-          -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.0'
+          -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.0' \
+          CODE_SIGN_STYLE=Automatic \
+          -allowProvisioningUpdates
 
