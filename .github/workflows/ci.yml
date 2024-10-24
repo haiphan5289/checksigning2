@@ -45,5 +45,6 @@ jobs:
           -scheme checksigning2 \
           -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.0' \
           CODE_SIGN_STYLE=Automatic \
-          -allowProvisioningUpdates
+          -allowProvisioningUpdates \
+          DEVELOPMENT_TEAM=3TYP89QWY5
 
