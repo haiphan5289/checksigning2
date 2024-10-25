@@ -26,21 +26,21 @@ jobs:
         brew install cocoapods
         pod install --project-directory=.
         
-    - name: Install Ruby dependencies (Fastlane)
-      run: |
-        gem install bundler  # Ensure Bundler is installed
-        bundle install  # Install dependencies defined in the Gemfile
-
-    - name: Fetch certificates and provisioning profiles
-      run: |
-        bundle exec fastlane match development --readonly
-        
-    - name: Build the app
-      run: |
-        bundle exec fastlane ios beta
-    
-    - name: Print Xcode Build Log
-      run: cat /Users/runner/Library/Logs/gym/checksigning-checksigning.log
+#    - name: Install Ruby dependencies (Fastlane)
+#      run: |
+#        gem install bundler  # Ensure Bundler is installed
+#        bundle install  # Install dependencies defined in the Gemfile
+#
+#    - name: Fetch certificates and provisioning profiles
+#      run: |
+#        bundle exec fastlane match development --readonly
+#        
+#    - name: Build the app
+#      run: |
+#        bundle exec fastlane ios beta
+#    
+#    - name: Print Xcode Build Log
+#      run: cat /Users/runner/Library/Logs/gym/checksigning-checksigning.log
         
     - name: Build and Test
       run: |
