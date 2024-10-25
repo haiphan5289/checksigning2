@@ -42,13 +42,18 @@ jobs:
 #    - name: Print Xcode Build Log
 #      run: cat /Users/runner/Library/Logs/gym/checksigning-checksigning.log
         
-    - name: Build and Test
+     - name: Build the project
       run: |
-        xcodebuild clean \
-          -workspace checksigning2.xcworkspace \
-          -scheme checksigning2 \
-          -destination 'platform=iOS Simulator,name=iPhone 14,OS=17.0' \
-          CODE_SIGN_STYLE=Automatic \
-          -allowProvisioningUpdates \
-          DEVELOPMENT_TEAM=3TYP89QWY5
+        xcodebuild -workspace checksigning.xcworkspace -scheme checksigning -sdk iphoneos -configuration Release archive -archivePath ${{ github.workspace }}
+
+     - name: Export the IPA
+      run: |
+        xcodebuild -exportArchive -archivePath ${{ github.workspace }}/checksigning.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath ${{ github.workspace }}/checksigning.ipa
+
+#    - name: Upload IPA to GitHub Releases
+#      uses: softprops/action-gh-release@v1
+#      with:
+#        files: YourProject.ipa
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
