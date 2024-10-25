@@ -42,8 +42,8 @@ jobs:
       # - name: Print Xcode Build Log
       #   run: cat /Users/runner/Library/Logs/gym/checksigning-checksigning.log
 
-       - name: Build the project
-         run: |
+      - name: Build the project
+        run: |
             xcodebuild -workspace checksigning2.xcworkspace \
             -scheme checksigning2 \
             -sdk iphoneos \
