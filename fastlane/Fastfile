@@ -1,25 +1,52 @@
 default_platform(:ios)
 
+# Define the API key method
+def api_key
+  app_store_connect_api_key(
+    key_id: ENV['APP_STORE_CONNECT_KEY_ID'],          # Your Key ID
+    issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],    # Your Issuer ID
+    key_content: ENV['APP_STORE_CONNECT_API_KEY']     # The content of your .p8 file
+  )
+end
+
 platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
     increment_build_number(xcodeproj: "checksigning2.xcodeproj")
+    
+    match(
+      type: "development",
+      api_key: api_key,                               # Use API key for match
+      git_url: "https://github.com/haiphan5289/ios-certificates",
+      storage_mode: "git"
+    )
+    
     build_app(
       workspace: "checksigning2.xcworkspace",
       scheme: "checksigning2",
       clean: true,
-      xcargs: "-allowProvisioningUpdates"  # Cho phép cập nhật provisioning profiles tự động
+      xcargs: "-allowProvisioningUpdates",            # Automatically update provisioning profiles
+      api_key: api_key                                # Use API key for authentication
     )
-    upload_to_testflight
+    
+    upload_to_testflight(api_key: api_key)            # Use API key for TestFlight upload
   end
 
   desc "Build the app"
   lane :build do
+    match(
+      type: "development",
+      api_key: api_key,                               # Use API key for match
+      git_url: "https://github.com/haiphan5289/ios-certificates",
+      storage_mode: "git"
+    )
+    
     build_app(
       workspace: "checksigning2.xcworkspace",
       scheme: "checksigning2",
       clean: true,
-      xcargs: "-allowProvisioningUpdates"  # Tự động quản lý signing
+      xcargs: "-allowProvisioningUpdates",            # Automatically manage signing
+      api_key: api_key                                # Use API key for authentication
     )
   end
 end

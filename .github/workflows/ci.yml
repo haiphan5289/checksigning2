@@ -21,29 +21,15 @@ jobs:
         with:
           xcode-version: "15.0"  # Adjust this to your Xcode version
 
-      - name: Install dependencies
+      - name: Install Homebrew dependencies
         run: |
           brew install cocoapods
           pod install --project-directory=.
-          bundle install
-      
+
       - name: Install Ruby dependencies (Fastlane)
         run: |
           gem install bundler  # Ensure Bundler is installed
           bundle install  # Install dependencies defined in the Gemfile
-
-      - name: Fetch certificates and provisioning profiles
-        env:
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
-        run: |
-          bundle exec fastlane match development --readonly
-
-      - name: Set up Fastlane
-        run: |
-          bundle exec fastlane add_plugin match
 
       - name: Set up App Store Connect API Key
         env:
@@ -51,39 +37,31 @@ jobs:
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
         run: |
-          echo "${APP_STORE_CONNECT_API_KEY}" > ./AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8
-          bundle exec fastlane match appstore --api_key_path "./AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8"
-      # - name: Install Ruby dependencies (Fastlane)
-      #   run: |
-      #     gem install bundler  # Ensure Bundler is installed
-      #     bundle install  # Install dependencies defined in the Gemfile
-      #
-      # - name: Fetch certificates and provisioning profiles
-      #   run: |
-      #     bundle exec fastlane match development --readonly
-      #
-      # - name: Build the app
-      #   run: |
-      #     bundle exec fastlane ios beta
-      #
-      # - name: Print Xcode Build Log
-      #   run: cat /Users/runner/Library/Logs/gym/checksigning-checksigning.log
+          echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > ./AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8
+
+      - name: Fetch certificates and provisioning profiles
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          bundle exec fastlane match development --readonly
 
       - name: Build the project
         env:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
         run: |
-            # Authenticate with your Apple ID
-            xcodebuild -workspace checksigning2.xcworkspace -scheme checksigning2 -sdk iphoneos -configuration Release archive -archivePath ${{ github.workspace }}/checksigning2.xcarchive -allowProvisioningUpdates
+          xcodebuild -workspace checksigning2.xcworkspace -scheme checksigning2 -sdk iphoneos -configuration Release archive -archivePath ${{ github.workspace }}/checksigning2.xcarchive -allowProvisioningUpdates
 
       - name: Export the IPA
         run: |
           xcodebuild -exportArchive -archivePath ${{ github.workspace }}/checksigning2.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath ${{ github.workspace }}/checksigning2.ipa
 
+      # Uncomment if you want to upload the IPA to GitHub Releases
       # - name: Upload IPA to GitHub Releases
       #   uses: softprops/action-gh-release@v1
       #   with:
-      #     files: YourProject.ipa
+      #     files: checksigning2.ipa
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
