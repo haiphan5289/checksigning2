@@ -13,47 +13,46 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Xcode
-      uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: "15.0"  # Thay đổi theo version Xcode bạn đang dùng
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "15.0"  # Adjust this to your Xcode version
 
-    - name: Install dependencies
-      run: |
-        brew install cocoapods
-        pod install --project-directory=.
-        
-#    - name: Install Ruby dependencies (Fastlane)
-#      run: |
-#        gem install bundler  # Ensure Bundler is installed
-#        bundle install  # Install dependencies defined in the Gemfile
-#
-#    - name: Fetch certificates and provisioning profiles
-#      run: |
-#        bundle exec fastlane match development --readonly
-#        
-#    - name: Build the app
-#      run: |
-#        bundle exec fastlane ios beta
-#    
-#    - name: Print Xcode Build Log
-#      run: cat /Users/runner/Library/Logs/gym/checksigning-checksigning.log
-        
-     - name: Build the project
-      run: |
-        xcodebuild -workspace checksigning.xcworkspace -scheme checksigning -sdk iphoneos -configuration Release archive -archivePath ${{ github.workspace }}
+      - name: Install dependencies
+        run: |
+          brew install cocoapods
+          pod install --project-directory=.
 
-     - name: Export the IPA
-      run: |
-        xcodebuild -exportArchive -archivePath ${{ github.workspace }}/checksigning.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath ${{ github.workspace }}/checksigning.ipa
+      # - name: Install Ruby dependencies (Fastlane)
+      #   run: |
+      #     gem install bundler  # Ensure Bundler is installed
+      #     bundle install  # Install dependencies defined in the Gemfile
+      #
+      # - name: Fetch certificates and provisioning profiles
+      #   run: |
+      #     bundle exec fastlane match development --readonly
+      #
+      # - name: Build the app
+      #   run: |
+      #     bundle exec fastlane ios beta
+      #
+      # - name: Print Xcode Build Log
+      #   run: cat /Users/runner/Library/Logs/gym/checksigning-checksigning.log
 
-#    - name: Upload IPA to GitHub Releases
-#      uses: softprops/action-gh-release@v1
-#      with:
-#        files: YourProject.ipa
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build the project
+        run: |
+          xcodebuild -workspace checksigning.xcworkspace -scheme checksigning -sdk iphoneos -configuration Release archive -archivePath ${{ github.workspace }}
 
+      - name: Export the IPA
+        run: |
+          xcodebuild -exportArchive -archivePath ${{ github.workspace }}/checksigning.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath ${{ github.workspace }}/checksigning.ipa
+
+      # - name: Upload IPA to GitHub Releases
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     files: YourProject.ipa
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
