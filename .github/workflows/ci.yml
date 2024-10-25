@@ -25,7 +25,34 @@ jobs:
         run: |
           brew install cocoapods
           pod install --project-directory=.
+          bundle install
+      
+      - name: Install Ruby dependencies (Fastlane)
+        run: |
+          gem install bundler  # Ensure Bundler is installed
+          bundle install  # Install dependencies defined in the Gemfile
 
+      - name: Fetch certificates and provisioning profiles
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+        run: |
+          bundle exec fastlane match development --readonly
+
+      - name: Set up Fastlane
+        run: |
+          bundle exec fastlane add_plugin match
+
+      - name: Set up App Store Connect API Key
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+        run: |
+          echo "${APP_STORE_CONNECT_API_KEY}" > ./AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8
+          bundle exec fastlane match appstore --api_key_path "./AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8"
       # - name: Install Ruby dependencies (Fastlane)
       #   run: |
       #     gem install bundler  # Ensure Bundler is installed
